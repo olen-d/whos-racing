@@ -1,0 +1,15 @@
+<html>
+  <body>
+    <label for="name">Promoter Name</label>
+    <input type="text" id="name" placeholder="Enter the name of the race promoter" />
+  </body>
+</html>
+
+<script>
+  const promoterName = document.getElementById('name')
+  let promoterValue = null
+
+  promoterName.addEventListener('blur', event => {
+    promoterValue = promoterName.value
+  })
+</script>
