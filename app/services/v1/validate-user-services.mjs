@@ -37,7 +37,7 @@ const validateRole = role => {
 const validateUsername = username => {
   return new Promise((resolve, reject) => {
     try {
-      const alphaNumeric = /^[a-zA-Z0-9\-_.]+$/
+      const alphaNumeric = /^[a-z0-9\-_.]+$/
 
       const isValid = alphaNumeric.test(username)
       resolve(isValid)
