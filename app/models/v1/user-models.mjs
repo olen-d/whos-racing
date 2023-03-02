@@ -17,9 +17,11 @@ const newUser = async (db, userInfo) => {
     lastName,
     plaintextPassword,
     role,
-    username,
+    username: usernameRaw,
     createdBy
   } = userInfo
+
+  const username = usernameRaw.toLowerCase()
 
   const isValidEmailAddress = validateEmailAddress(emailAddress)
   const isValidFirstName = validateFirstName(firstName)

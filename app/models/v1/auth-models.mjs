@@ -8,8 +8,10 @@ import { validatePassword, validateUsername } from '../../services/v1/validate-u
 const authenticateUser = async (db, ObjectId, algorithm, audience, clientId, clientIp, info, issuer, privateKeyFile, refreshtokenAudience, refreshTokenPrivateKeyFile) => {
   const {
     plaintextPassword,
-    username
+    username: usernameRaw
   } = info
+
+  const username = usernameRaw.toLowerCase()
 
   const isValidPassword = validatePassword(plaintextPassword)
   const isValidUsername = validateUsername(username)
