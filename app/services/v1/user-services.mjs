@@ -33,6 +33,18 @@ const readUserRole = async (db, info) => {
   }
 }
 
+const readUserRoleById = async (db, ObjectId, userId) => {
+  const options = { projection: { role: 1 } }
+  const query = { _id: ObjectId(userId) }
+
+  try {
+    const data = await db.collection('users').findOne(query, options)
+    return data
+  } catch (error) {
+    throw new Error(`User Services Read User Role By Id ${error}`)
+  }
+}
+
 const readAllUsers = async db => {
   const cursor = db.collection('users').find().project({ _id: 1, firstName: 1, lastName: 1, role: 1, username: 1 })
 
@@ -44,4 +56,10 @@ const readAllUsers = async db => {
   }
 }
 
-export { createUser, readAllUsers, readUserPasswordHash, readUserRole }
+export {
+  createUser,
+  readAllUsers,
+  readUserPasswordHash,
+  readUserRole,
+  readUserRoleById
+}

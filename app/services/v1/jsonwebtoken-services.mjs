@@ -24,10 +24,10 @@ const issueRefreshToken = async (algorithm, refreshTokenAudience, clientId, refr
   }
 }
 
-const verifyToken = (accessToken, publicKeyFile, jwtAlgorithm, jwtIssuer) => {
+const verifyToken = (token, publicKeyFile, jwtAlgorithm, jwtIssuer) => {
   const publicKey = fs.readFileSync(publicKeyFile)
   return new Promise((resolve, reject) => {
-    jwt.verify(accessToken, publicKey, { algorithms: [jwtAlgorithm], issuer: jwtIssuer }, (error, decoded) => {
+    jwt.verify(token, publicKey, { algorithms: [jwtAlgorithm], issuer: jwtIssuer }, (error, decoded) => {
       if (error) {
         reject(error)
       } else {

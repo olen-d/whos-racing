@@ -36,6 +36,7 @@ const schema = {
 		'PORT',
 		'RT_AUDIENCE',
 		'RT_PRIVATE_KEY_PEM_FILE',
+		'RT_PUBLIC_KEY_PEM_FILE',
 		'SERVER_URL'
 	],
   properties: {
@@ -77,6 +78,9 @@ const schema = {
 			type: 'string',
 		},
 		RT_PRIVATE_KEY_PEM_FILE: {
+			type: 'string',
+		},
+		RT_PUBLIC_KEY_PEM_FILE: {
 			type: 'string',
 		},
 		SERVER_URL: {
