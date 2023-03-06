@@ -54,9 +54,8 @@ const tokenGrantTypePasswordSchema = {
 const tokenGrantTypeRefreshTokenSchema = {
   body: {
     type: 'object',
-    required: ['userId', 'refreshToken'],
+    required: ['refreshToken'],
     properties: {
-      userId: { type: 'string' },
       refreshToken: { type: 'string' }
     },
     additionalProperties: false
