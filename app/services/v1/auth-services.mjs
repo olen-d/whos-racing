@@ -18,4 +18,13 @@ const readPublicKey = publicKeyFile => {
   }
 }
 
-export { createRefreshToken, readPublicKey}
+const readRefreshToken = async (db, ObjectId, userId, refreshToken, ipAddress) => {
+  try {
+    const result = await db.collection('refreshTokens').findOne({ userId: ObjectId(userId), refreshToken, ipAddress})
+    return result
+  } catch (error) {
+    throw new Error(`Auth Services Read Refresh Token ${error}`)
+  }
+}
+
+export { createRefreshToken, readPublicKey, readRefreshToken }

@@ -1,12 +1,17 @@
 import { hashPassword } from '../../services/v1/bcrypt-services.mjs'
 
-import { createUser, readAllUsers } from '../../services/v1/user-services.mjs'
+import { createUser, readAllUsers, readUserRoleById } from '../../services/v1/user-services.mjs'
 import { processValidations } from '../../services/v1/process-validation-services.mjs'
 import { validatePassword, validateRole, validateUsername} from '../../services/v1/validate-user-services.mjs'
 import { validateEmailAddress, validateFirstName, validateLastName } from '../../services/v1/validate-services.mjs'
 
 const getAllUsers = async (db) => {
   const data = await readAllUsers(db)
+  return { status: 'ok', data }
+}
+
+const getUserRoleById = async (db, ObjectId, userId) => {
+  const data = await readUserRoleById(db, ObjectId, userId)
   return { status: 'ok', data }
 }
 
@@ -60,4 +65,4 @@ const newUser = async (db, userInfo) => {
   }
 }
 
-export { getAllUsers, newUser }
+export { getAllUsers, getUserRoleById, newUser }

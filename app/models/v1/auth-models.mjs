@@ -1,4 +1,4 @@
-import { createRefreshToken } from '../../services/v1/auth-services.mjs'
+import { createRefreshToken, readRefreshToken } from '../../services/v1/auth-services.mjs'
 import { checkPassword } from '../../services/v1/bcrypt-services.mjs'
 import { issueBearerToken, issueRefreshToken } from '../../services/v1/jsonwebtoken-services.mjs'
 import { readUserPasswordHash, readUserRole } from '../../services/v1/user-services.mjs'
@@ -49,7 +49,7 @@ const authenticateUser = async (db, ObjectId, algorithm, audience, clientId, cli
       const refreshToken = await issueRefreshToken(algorithm, refreshtokenAudience, clientId, refreshTokenExpiresIn, issuer, refreshTokenPrivateKeyFile, userId)
       if (refreshToken) {
         const newRefreshToken = {
-          userId,
+          userId: ObjectId(userId),
           refreshToken,
           ipAddress: clientIp
         }
@@ -69,4 +69,13 @@ const authenticateUser = async (db, ObjectId, algorithm, audience, clientId, cli
   }
 }
 
-export { authenticateUser }
+const getRefreshToken = async (db, ObjectId, userId, refreshToken, ipAddress) => {
+  try {
+    const data = await readRefreshToken(db, ObjectId, userId, refreshToken, ipAddress)
+    return { status: "ok", data }
+  } catch (error) {
+    return { status: 'error', type: 'database', message: 'unable to read refresh token', error }
+  }
+}
+
+export { authenticateUser, getRefreshToken }
