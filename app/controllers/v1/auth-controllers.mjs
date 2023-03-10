@@ -24,7 +24,7 @@ const tokenGrantTypePassword = async function (req, reply) {
   const { status } = result
 
   if (status === 'ok') {
-    reply.code(201).send(result)
+    reply.code(201).setCookie('foo', 'bar', { path: '/' }).send(result)
   } else if (status === 'error') {
     const { type } = result
     switch (type) {
