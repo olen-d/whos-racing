@@ -1,6 +1,6 @@
 import { authenticateUser, getRefreshToken } from '../../models/v1/auth-models.mjs'
 import { getUserRoleById } from '../../models/v1/user-models.mjs'
-import { createRefreshToken, readPublicKey } from '../../services/v1/auth-services.mjs'
+import { createRefreshToken, readPublicKeyTokenBearer, readPublicKeyTokenRefresh } from '../../services/v1/auth-services.mjs'
 import { issueBearerToken, issueRefreshToken, verifyToken } from '../../services/v1/jsonwebtoken-services.mjs'
 import { sanitizeAll, trimAll } from '../../services/v1/input-services.mjs'
 
@@ -9,13 +9,6 @@ const tokenGrantTypePassword = async function (req, reply) {
   const { config: { JWT_ALGORITHM: algorithm, JWT_AUDIENCE: audience, CLIENT_ID: clientId, JWT_ISSUER: issuer, JWT_PRIVATE_KEY_PEM_FILE: privateKeyFile, RT_AUDIENCE: refreshtokenAudience, RT_PRIVATE_KEY_PEM_FILE: refreshTokenPrivateKeyFile }, mongo: { db, ObjectId } } = this
 
   const { body } = req
-
-  const {
-    body: {
-      plaintextPassword: plaintextPasswordRaw,
-      username: usernameRaw
-    }
-  } = req
 
   const trimmed = trimAll(body)
   const sanitized = sanitizeAll(trimmed)
@@ -54,7 +47,10 @@ const tokenGrantTypePassword = async function (req, reply) {
 }
 
 const tokenGrantTypeRefreshToken = async function (req, reply) {
-  const { body: { refreshToken }, headers: { referer }, ip: clientIp } = req
+  console.log(`\n\nCookieRT\n${JSON.stringify(req.cookies, null, 5)}\n\n`)
+  const cookieRefreshToken = req?.cookies?.refreshToken // In case users have cookies disabled
+  const { body: { refreshToken: refreshTokenValue }, headers: { referer }, ip: clientIp } = req
+  const refreshToken = refreshTokenValue === 'none' && cookieRefreshToken ? cookieRefreshToken : refreshTokenValue
   const { config: { JWT_ALGORITHM: algorithm, JWT_AUDIENCE: audience, JWT_ISSUER: issuer, JWT_PRIVATE_KEY_PEM_FILE: privateKeyFile, RT_AUDIENCE: refreshtokenAudience, RT_PRIVATE_KEY_PEM_FILE: refreshTokenPrivateKeyFile, RT_PUBLIC_KEY_PEM_FILE: refreshTokenPublicKeyFile }, mongo: { db, ObjectId } } = this
   const verifyTokenResult = await verifyToken(refreshToken, refreshTokenPublicKeyFile, algorithm, issuer)
   const { clientId, sub: userId } = verifyTokenResult
@@ -95,13 +91,22 @@ const tokenGrantTypeRefreshToken = async function (req, reply) {
   }
 }
 
-const tokenPublicKey = async function (req, reply) {
+const tokenBearerPublicKey = async function (req, reply) {
   const { config: { JWT_PUBLIC_KEY_PEM_FILE: publicKeyFile } } = this
-  const publicKey = readPublicKey(publicKeyFile)
+  const publicKey = readPublicKeyTokenBearer(publicKeyFile)
 
   if (publicKey) {
     reply.code(200).send({ status: 'ok', data: { publicKey } })
   }
 }
 
-export { tokenGrantTypePassword, tokenGrantTypeRefreshToken, tokenPublicKey }
+const tokenRefreshPublicKey = async function (req, reply) {
+  const { config: { RT_PUBLIC_KEY_PEM_FILE: publicKeyFile } } = this
+  const publicKey = readPublicKeyTokenRefresh(publicKeyFile)
+
+  if (publicKey) {
+    reply.code(200).send({ status: 'ok', data: { publicKey } })
+  }
+}
+
+export { tokenGrantTypePassword, tokenGrantTypeRefreshToken, tokenBearerPublicKey, tokenRefreshPublicKey }

@@ -3,6 +3,7 @@ import Fastify from 'fastify'
 
 // Fastify plugins
 import fastifyAuth from '@fastify/auth'
+import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
 import fastifyEnv from '@fastify/env'
 import fastifyMongodb from '@fastify/mongodb'
@@ -98,6 +99,7 @@ const options = {
 
 const initialize = async () => {
 	app.register(fastifyAuth)
+	app.register(fastifyCookie)
   app.register(fastifyEnv, options)
   await app.after()
 

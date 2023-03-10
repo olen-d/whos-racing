@@ -9,12 +9,21 @@ const createRefreshToken = async (db, newRefreshToken) => {
   }
 }
 
-const readPublicKey = publicKeyFile => {
+const readPublicKeyTokenBearer = publicKeyFile => {
   try {
     const publicKey = fs.readFileSync(publicKeyFile)
     return publicKey
   } catch (error) {
-    throw new Error(`Auth Services Read Public Key ${error}`)
+    throw new Error(`Auth Services Read Public Key Token Bearer ${error}`)
+  }
+}
+
+const readPublicKeyTokenRefresh = publicKeyFile => {
+  try {
+    const publicKey = fs.readFileSync(publicKeyFile)
+    return publicKey
+  } catch (error) {
+    throw new Error(`Auth Services Read Public Key Token Refresh ${error}`)
   }
 }
 
@@ -27,4 +36,4 @@ const readRefreshToken = async (db, ObjectId, userId, refreshToken, ipAddress) =
   }
 }
 
-export { createRefreshToken, readPublicKey, readRefreshToken }
+export { createRefreshToken, readPublicKeyTokenBearer, readPublicKeyTokenRefresh, readRefreshToken }
