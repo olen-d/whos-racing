@@ -24,7 +24,15 @@ const tokenGrantTypePassword = async function (req, reply) {
   const { status } = result
 
   if (status === 'ok') {
-    reply.code(201).setCookie('foo', 'bar', { path: '/' }).send(result)
+    const expiration = new Date()
+    expiration.setDate(expiration.getDate() + 30)
+
+    const options = {
+      expires: expiration,
+      path: '/'
+    }
+
+    reply.code(201).setCookie('foo', 'bar', options).send(result)
   } else if (status === 'error') {
     const { type } = result
     switch (type) {
