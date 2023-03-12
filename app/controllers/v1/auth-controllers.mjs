@@ -30,7 +30,8 @@ const tokenGrantTypePassword = async function (req, reply) {
     const options = {
       expires: expiration,
       httpOnly: true,
-      path: '/'
+      path: '/',
+      secure: true
     }
 
     reply.code(201).setCookie('foo', 'bar', options).send(result)
