@@ -29,6 +29,7 @@ const tokenGrantTypePassword = async function (req, reply) {
 
     const options = {
       expires: expiration,
+      httpOnly: true,
       path: '/'
     }
 
