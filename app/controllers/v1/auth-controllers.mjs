@@ -24,6 +24,8 @@ const tokenGrantTypePassword = async function (req, reply) {
   const { status } = result
 
   if (status === 'ok') {
+    const { data: refreshToken } = result
+
     const expiration = new Date()
     expiration.setDate(expiration.getDate() + 30)
 
@@ -34,7 +36,7 @@ const tokenGrantTypePassword = async function (req, reply) {
       secure: true
     }
 
-    reply.code(201).setCookie('foo', 'bar', options).send(result)
+    reply.code(201).setCookie('refreshToken', refreshToken, options).send(result)
   } else if (status === 'error') {
     const { type } = result
     switch (type) {
