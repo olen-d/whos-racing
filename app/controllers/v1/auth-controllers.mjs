@@ -24,7 +24,7 @@ const tokenGrantTypePassword = async function (req, reply) {
   const { status } = result
 
   if (status === 'ok') {
-    const { data: refreshToken } = result
+    const { data: { refreshToken }, } = result
 
     const expiration = new Date()
     expiration.setDate(expiration.getDate() + 30)
@@ -59,7 +59,6 @@ const tokenGrantTypePassword = async function (req, reply) {
 }
 
 const tokenGrantTypeRefreshToken = async function (req, reply) {
-  console.log(`\n\nCookieRT\n${JSON.stringify(req.cookies, null, 5)}\n\n`)
   const cookieRefreshToken = req?.cookies?.refreshToken // In case users have cookies disabled
   const { body: { refreshToken: refreshTokenValue }, headers: { referer }, ip: clientIp } = req
   const refreshToken = refreshTokenValue === 'none' && cookieRefreshToken ? cookieRefreshToken : refreshTokenValue
