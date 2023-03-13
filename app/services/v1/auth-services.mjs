@@ -9,6 +9,17 @@ const createRefreshToken = async (db, newRefreshToken) => {
   }
 }
 
+const deleteRefreshToken = async (db, refreshToken) => {
+  try {
+    const filter = { refreshToken }
+    const result = await db.collection('refreshTokens').findOneAndDelete(filter)
+
+    return result
+  } catch (error) {
+    throw new Error(`Auth Services Delete Refresh Token ${error}`)
+  }
+}
+
 const readPublicKeyTokenBearer = publicKeyFile => {
   try {
     const publicKey = fs.readFileSync(publicKeyFile)
@@ -36,4 +47,10 @@ const readRefreshToken = async (db, ObjectId, userId, refreshToken, ipAddress) =
   }
 }
 
-export { createRefreshToken, readPublicKeyTokenBearer, readPublicKeyTokenRefresh, readRefreshToken }
+export {
+  createRefreshToken,
+  deleteRefreshToken,
+  readPublicKeyTokenBearer, 
+  readPublicKeyTokenRefresh,
+  readRefreshToken
+}

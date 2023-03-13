@@ -1,8 +1,26 @@
-import { authenticateUser, getRefreshToken } from '../../models/v1/auth-models.mjs'
+import { authenticateUser, getRefreshToken, removeRefreshToken } from '../../models/v1/auth-models.mjs'
 import { getUserRoleById } from '../../models/v1/user-models.mjs'
 import { createRefreshToken, readPublicKeyTokenBearer, readPublicKeyTokenRefresh } from '../../services/v1/auth-services.mjs'
 import { issueBearerToken, issueRefreshToken, verifyToken } from '../../services/v1/jsonwebtoken-services.mjs'
 import { sanitizeAll, trimAll } from '../../services/v1/input-services.mjs'
+
+async function discardRefreshToken (req, reply) {
+  try {
+    const { mongo: { db }, } = this
+
+    const { body } = req
+
+    const trimmed = trimAll(body)
+    const refreshTokenInfo = sanitizeAll(trimmed)
+
+    const { refreshToken } = refreshTokenInfo
+
+    const result = await removeRefreshToken(db, refreshToken)
+    return result
+  } catch (error) {
+    throw new Error(`Auth Controllers Discard Refresh Token ${error}`)
+  }
+}
 
 const tokenBearerPublicKey = async function (req, reply) {
   const { config: { JWT_PUBLIC_KEY_PEM_FILE: publicKeyFile } } = this
@@ -112,7 +130,7 @@ const tokenGrantTypeRefreshToken = async function (req, reply) {
 }
 
 const tokenRefreshClearCookie = (req, reply) => {
-  reply.code(204).clearCookie('refreshToken', { path: '/' })
+  reply.code(200).clearCookie('refreshToken').send({ status: 'ok' })
 }
 
 const tokenRefreshPublicKey = async function (req, reply) {
@@ -125,6 +143,7 @@ const tokenRefreshPublicKey = async function (req, reply) {
 }
 
 export {
+  discardRefreshToken,
   tokenBearerPublicKey, 
   tokenGrantTypePassword,
   tokenGrantTypeRefreshToken,
