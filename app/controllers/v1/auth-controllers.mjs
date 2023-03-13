@@ -4,6 +4,15 @@ import { createRefreshToken, readPublicKeyTokenBearer, readPublicKeyTokenRefresh
 import { issueBearerToken, issueRefreshToken, verifyToken } from '../../services/v1/jsonwebtoken-services.mjs'
 import { sanitizeAll, trimAll } from '../../services/v1/input-services.mjs'
 
+const tokenBearerPublicKey = async function (req, reply) {
+  const { config: { JWT_PUBLIC_KEY_PEM_FILE: publicKeyFile } } = this
+  const publicKey = readPublicKeyTokenBearer(publicKeyFile)
+
+  if (publicKey) {
+    reply.code(200).send({ status: 'ok', data: { publicKey } })
+  }
+}
+
 const tokenGrantTypePassword = async function (req, reply) {
   const { ip: clientIp } = req
   const { config: { JWT_ALGORITHM: algorithm, JWT_AUDIENCE: audience, CLIENT_ID: clientId, JWT_ISSUER: issuer, JWT_PRIVATE_KEY_PEM_FILE: privateKeyFile, RT_AUDIENCE: refreshtokenAudience, RT_PRIVATE_KEY_PEM_FILE: refreshTokenPrivateKeyFile }, mongo: { db, ObjectId } } = this
@@ -102,13 +111,8 @@ const tokenGrantTypeRefreshToken = async function (req, reply) {
   }
 }
 
-const tokenBearerPublicKey = async function (req, reply) {
-  const { config: { JWT_PUBLIC_KEY_PEM_FILE: publicKeyFile } } = this
-  const publicKey = readPublicKeyTokenBearer(publicKeyFile)
-
-  if (publicKey) {
-    reply.code(200).send({ status: 'ok', data: { publicKey } })
-  }
+const tokenRefreshClearCookie = (req, reply) => {
+  reply.code(204).clearCookie('refreshToken', { path: '/' })
 }
 
 const tokenRefreshPublicKey = async function (req, reply) {
@@ -120,4 +124,10 @@ const tokenRefreshPublicKey = async function (req, reply) {
   }
 }
 
-export { tokenGrantTypePassword, tokenGrantTypeRefreshToken, tokenBearerPublicKey, tokenRefreshPublicKey }
+export {
+  tokenBearerPublicKey, 
+  tokenGrantTypePassword,
+  tokenGrantTypeRefreshToken,
+  tokenRefreshClearCookie,
+  tokenRefreshPublicKey
+}
