@@ -1,4 +1,4 @@
-import { createRefreshToken, readRefreshToken } from '../../services/v1/auth-services.mjs'
+import { createRefreshToken, deleteRefreshToken, readRefreshToken } from '../../services/v1/auth-services.mjs'
 import { checkPassword } from '../../services/v1/bcrypt-services.mjs'
 import { issueBearerToken, issueRefreshToken } from '../../services/v1/jsonwebtoken-services.mjs'
 import { readUserPasswordHash, readUserRole } from '../../services/v1/user-services.mjs'
@@ -78,4 +78,13 @@ const getRefreshToken = async (db, ObjectId, userId, refreshToken, ipAddress) =>
   }
 }
 
-export { authenticateUser, getRefreshToken }
+const removeRefreshToken = async (db, refreshToken) => {
+  try {
+    const data = await deleteRefreshToken(db, refreshToken)
+    return { status: 'ok', data }
+  } catch (error) {
+    throw new Error(`Auth Models Remove Refresh Token ${error}`)
+  }
+}
+
+export { authenticateUser, getRefreshToken, removeRefreshToken }
