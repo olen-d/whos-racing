@@ -40,7 +40,7 @@ const readPublicKeyTokenRefresh = publicKeyFile => {
 
 const readRefreshToken = async (db, ObjectId, userId, refreshToken, ipAddress) => {
   try {
-    const result = await db.collection('refreshTokens').findOne({ userId: ObjectId(userId), refreshToken, ipAddress})
+    const result = await db.collection('refreshTokens').findOne({ userId: ObjectId(userId), refreshToken })
     return result
   } catch (error) {
     throw new Error(`Auth Services Read Refresh Token ${error}`)
