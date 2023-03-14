@@ -102,7 +102,7 @@ const tokenGrantTypeRefreshToken = async function (req, reply) {
       const userData = await getUserRoleById(db, ObjectId, userId)
       const expiresIn = '1h'
       const refreshTokenExpiresIn = '30d'
-      const { role } = userData
+      const { data: { role }, } = userData
 
       const accessToken = await issueBearerToken(algorithm, audience, expiresIn, issuer, privateKeyFile, role, userId)
       const newRefreshToken = await issueRefreshToken(algorithm, refreshtokenAudience, clientId, refreshTokenExpiresIn, issuer, refreshTokenPrivateKeyFile, userId)
