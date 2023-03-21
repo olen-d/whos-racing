@@ -1,3 +1,5 @@
+import { readUserByUsername } from './user-services.mjs'
+
 const validatePassword = password => {
   return new Promise((resolve, reject) => {
     try {
@@ -34,17 +36,19 @@ const validateRole = role => {
   })
 }
 
-const validateUsername = username => {
-  return new Promise((resolve, reject) => {
-    try {
-      const alphaNumeric = /^[a-z0-9\-_.]+$/
+const validateUsername = async (db, username) => {
+  try {
+    const response = await readUserByUsername(db, username)
+    const isUnique = response === null
+console.log(`\n\n${JSON.stringify(response, null, 2)}`)
+console.log(`${JSON.stringify(isUnique)}\n\n\n`)
+    const alphaNumeric = /^[a-z0-9\-_.]+$/
 
-      const isValid = alphaNumeric.test(username)
-      resolve(isValid)
-    } catch (error) {
-      reject(error)
-    }
-  })
+    const isValid = isUnique && alphaNumeric.test(username)
+    return isValid
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 export { validatePassword, validateRole, validateUsername }
