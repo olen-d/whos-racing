@@ -1,12 +1,17 @@
 import { hashPassword } from '../../services/v1/bcrypt-services.mjs'
 
-import { createUser, readAllUsers, readUserRoleById } from '../../services/v1/user-services.mjs'
+import { createUser, readAllUsers, readUserByUsername, readUserRoleById } from '../../services/v1/user-services.mjs'
 import { processValidations } from '../../services/v1/process-validation-services.mjs'
 import { validatePassword, validateRole, validateUsername} from '../../services/v1/validate-user-services.mjs'
 import { validateEmailAddress, validateFirstName, validateLastName } from '../../services/v1/validate-services.mjs'
 
 const getAllUsers = async (db) => {
   const data = await readAllUsers(db)
+  return { status: 'ok', data }
+}
+
+const getUserByUsername = async (db, username) => {
+  const data = await readUserByUsername(db, username)
   return { status: 'ok', data }
 }
 
@@ -33,7 +38,7 @@ const newUser = async (db, userInfo) => {
   const isValidLastName = validateLastName(lastName)
   const isValidPassword = validatePassword(plaintextPassword)
   const isValidRole = validateRole(role)
-  const isValidUsername = validateUsername(username)
+  const isValidUsername = validateUsername(db, username)
 
   const validations = await Promise.allSettled([isValidEmailAddress, isValidFirstName, isValidLastName, isValidPassword, isValidRole, isValidUsername])
   const fields = ['emailAddress', 'firstName', 'lastName', 'plaintextPassword', 'role', 'username'] // These need to be in the same order as Promise.allSettled above
@@ -65,4 +70,4 @@ const newUser = async (db, userInfo) => {
   }
 }
 
-export { getAllUsers, getUserRoleById, newUser }
+export { getAllUsers, getUserByUsername, getUserRoleById, newUser }
