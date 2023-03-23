@@ -36,12 +36,23 @@ const validateRole = role => {
   })
 }
 
-const validateUsername = async (db, username) => {
+const validateUsername = username => {
+  return new Promise((resolve, reject) => {
+    try {
+      const alphaNumeric = /^[a-z0-9\-_.]+$/
+  
+      const isValid = alphaNumeric.test(username)
+      resolve(isValid)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+const validateUsernameUnique = async (db, username) => {
   try {
     const response = await readUserByUsername(db, username)
     const isUnique = response === null
-console.log(`\n\n${JSON.stringify(response, null, 2)}`)
-console.log(`${JSON.stringify(isUnique)}\n\n\n`)
     const alphaNumeric = /^[a-z0-9\-_.]+$/
 
     const isValid = isUnique && alphaNumeric.test(username)
@@ -51,4 +62,4 @@ console.log(`${JSON.stringify(isUnique)}\n\n\n`)
   }
 }
 
-export { validatePassword, validateRole, validateUsername }
+export { validatePassword, validateRole, validateUsername, validateUsernameUnique }
