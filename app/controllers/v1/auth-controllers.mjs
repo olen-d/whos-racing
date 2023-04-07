@@ -96,7 +96,7 @@ const tokenGrantTypeRefreshToken = async function (req, reply) {
     const { clientId, sub: userId } = verifyTokenResult
 
     const clientName = clientId.split("://")[1] // discard http(s)://
-    const refererValue = userAgent === 'node-fetch' ? process.env.CLIENT_ID : referer
+    const refererValue = userAgent === 'node-fetch' || 'undici' ? process.env.CLIENT_ID : referer
     const refererName = refererValue.split("://")[1].split("/")[0]; // discard http(s):// and anything after the top level domain
 
     if (clientName === refererName) {
